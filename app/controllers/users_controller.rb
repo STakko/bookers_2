@@ -7,17 +7,17 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @books =  @user.books.page(params[:page]).reverse_order
   end
-  
+
   def edit
-    if 
-      params[:id] == current_user
-      @user = User.find(params[:id])
+    @user = User.find(params[:id])
+    if@user == current_user
+      render:edit
     else
       @user = current_user
       redirect_to user_path(@user.id)
     end
   end
-  
+
   def update
     @user = User.find(params[:id])
     if
@@ -28,11 +28,11 @@ class UsersController < ApplicationController
        render :edit
     end
   end
-  
+
   private
-  
+
   def user_params
     params.require(:user).permit(:name, :profile_image, :introdution)
   end
-    
+
 end
