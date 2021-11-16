@@ -15,7 +15,7 @@ class User < ApplicationRecord
   has_many :followers, through: :reverse_of_relationships, source: :follower
   #与フォロー関係を通して自分がフォローしているuserを参照
   has_many :followings, through: :relationships, source: :followed
-  
+
   attachment :profile_image
 
   validates :name, length: {in: 2..20}
@@ -23,18 +23,29 @@ class User < ApplicationRecord
   validates :name, uniqueness: true
 
   validates :introduction, length: {maximum: 50}
-  
+
   def follow(user_id)
     relationships.create(followed_id: user_id)
   end
-  
+
   def unfollow(user_id)
     relationships.find_by(followed_id: user_id).destroy
   end
-  
+
   def following?(user)
     followings.include?(user)
   end
 
-  
+  def self.seach_for(content, method)
+    if method == 'perfect'
+      User.where(name: content)
+    elsif method == 'forward'
+      User.where('name LIKE ?': content + '%')
+    elsif method == 'backward'
+      User.where('name LIKE ?': '%' + content)
+    else
+      User.where('name LIKE ?': '%' + content + '%')
+    end
+  end
+
 end
