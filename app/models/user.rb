@@ -7,22 +7,22 @@ class User < ApplicationRecord
   has_many :books, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :comments, dependent: :destroy
-  #自分がフォローされる
+  # 自分がフォローされる
   has_many :reverse_of_relationships, class_name: "Relationship", foreign_key: "followed_id", dependent: :destroy
-  #自分がフォローする
+  # 自分がフォローする
   has_many :relationships, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
-  #被フォロー関係を通して自分をフォローしているuserを参照
+  # 被フォロー関係を通して自分をフォローしているuserを参照
   has_many :followers, through: :reverse_of_relationships, source: :follower
-  #与フォロー関係を通して自分がフォローしているuserを参照
+  # 与フォロー関係を通して自分がフォローしているuserを参照
   has_many :followings, through: :relationships, source: :followed
 
   attachment :profile_image
 
-  validates :name, length: {in: 2..20}
+  validates :name, length: { in: 2..20 }
   validates :name, presence: true
   validates :name, uniqueness: true
 
-  validates :introduction, length: {maximum: 50}
+  validates :introduction, length: { maximum: 50 }
 
   def follow(user_id)
     relationships.create(followed_id: user_id)
@@ -40,12 +40,11 @@ class User < ApplicationRecord
     if method == 'perfect'
       User.where(name: content)
     elsif method == 'forward'
-      User.where('name LIKE ?', content+'%')
+      User.where('name LIKE ?', content + '%')
     elsif method == 'backward'
-      User.where('name LIKE ?', '%'+content)
+      User.where('name LIKE ?', '%' + content)
     else
-      User.where('name LIKE ?', '%'+content+'%')
+      User.where('name LIKE ?', '%' + content + '%')
     end
   end
-
 end
